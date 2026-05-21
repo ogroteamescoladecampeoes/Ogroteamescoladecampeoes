@@ -1,455 +1,450 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ogro Team</title>
+    <title>OGRO TEAM</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
+
 <div class="app-container">
 
-<!-- P1: LOGIN -->
-<div id="p1" class="page active">
-    <div class="brand-header">
-        <img src="logo.png" alt="Ogro Team" class="logo-oficial" onerror="this.style.display='none';document.getElementById('lf').style.display='inline-flex'">
-        <div id="lf" class="logo-placeholder" style="display:none">👹</div>
-        <h2>OGRO TEAM</h2>
-        <p class="subtitle">Acesso Unificado ao Sistema</p>
-    </div>
-    <div class="form-group"><label>E-mail, Nome ou WhatsApp</label><input type="text" id="login-email" placeholder="Digite seu acesso"></div>
-    <div class="form-group"><label>Senha</label>
-        <div class="password-wrapper">
-            <input type="password" id="login-senha" placeholder="••••••••">
-            <span class="password-toggle" id="toggle-senha">👁️</span>
+    <!-- LOGIN -->
+    <div id="p1" class="page active">
+
+        <div class="brand-header">
+            <img src="logo.png" class="logo-oficial">
+            <h2>OGRO TEAM</h2>
+            <p class="subtitle">Sistema Completo de Gestão</p>
         </div>
-    </div>
-    <button class="btn btn-primary" id="btn-login">Entrar</button>
-    <span class="text-link" id="link-esqueceu">Esqueceu a Senha?</span>
-</div>
 
-<!-- P2: RECUPERAÇÃO DE SENHA -->
-<div id="p2" class="page">
-    <h2>Recuperação de Senha</h2>
-    <p class="subtitle">Redefina suas credenciais</p>
-    <div class="form-group"><label>E-mail ou Nome</label><input type="text" id="recup-usuario" placeholder="Seu e-mail ou nome"></div>
-    <div class="form-group"><label>Nova Senha</label><input type="password" id="recup-nova" placeholder="Nova senha"></div>
-    <div class="form-group"><label>Confirmar Senha</label><input type="password" id="recup-confirma" placeholder="Repita a senha"></div>
-    <button class="btn btn-primary" id="btn-recuperar">Redefinir Senha</button>
-    <span class="text-link" id="link-voltar-login">← Voltar ao Login</span>
-</div>
+        <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" id="login-email">
+        </div>
 
-<!-- P3: PAINEL DE GESTÃO -->
-<div id="p3" class="page">
-    <h2>Painel de Gestão</h2>
-    <p class="subtitle">Controle Operacional e Administrativo</p>
-    <div class="grid-menu">
-        <div class="card-premium" data-nav="4"><div class="card-icon">👤</div><div class="card-title">Incluir Aluno</div><div class="card-subtext">Cadastro Premium</div></div>
-        <div class="card-premium" data-nav="5"><div class="card-icon">🏛️</div><div class="card-title">Incluir CT</div><div class="card-subtext">Gerencie filiais</div></div>
-        <div class="card-premium" data-nav="6"><div class="card-icon">📈</div><div class="card-title">Dashboard</div><div class="card-subtext">Resultados e metas</div></div>
-        <div class="card-premium" data-nav="7"><div class="card-icon">👥</div><div class="card-title">Equipe</div><div class="card-subtext">Controle acessos</div></div>
-        <div class="card-premium" data-nav="8"><div class="card-icon">⏱️</div><div class="card-title">Presença / QR</div><div class="card-subtext">Chamada e Catraca</div></div>
-        <div class="card-premium" data-nav="11"><div class="card-icon">📊</div><div class="card-title">Relatórios</div><div class="card-subtext">Exportar filtros</div></div>
-        <div class="card-premium" data-nav="14"><div class="card-icon">🏆</div><div class="card-title">Campeonatos</div><div class="card-subtext">e Autorizações</div></div>
-        <div class="card-premium" data-nav="15"><div class="card-icon">💳</div><div class="card-title">Pagamentos</div><div class="card-subtext">Controle financeiro</div></div>
-        <div class="card-premium" data-nav="13"><div class="card-icon">⚙️</div><div class="card-title">Configurações</div><div class="card-subtext">Preços e Auditoria</div></div>
-    </div>
-    <button class="btn btn-accent" id="btn-sair" style="margin-top:20px">Sair do Sistema</button>
-</div>
+        <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="login-senha">
+        </div>
 
-<!-- P4: CADASTRO DE ALUNO -->
-<div id="p4" class="page">
-    <h2>Cadastro de Aluno</h2>
-    <div class="photo-upload-container">
-        <label id="aluno-foto-preview" class="avatar-placeholder">📷 Foto</label>
-        <input type="file" id="foto-upload" accept="image/*" style="display:none">
+        <button class="btn btn-primary" onclick="login()">
+            Entrar
+        </button>
+
     </div>
-    <div class="form-group"><label>Nome Completo *</label><input type="text" id="cad-nome" placeholder="Nome completo"></div>
-    <div class="form-group"><label>E-mail</label><input type="email" id="cad-email" placeholder="email@exemplo.com"></div>
-    <div class="form-group"><label>WhatsApp (DDD+número) *</label><input type="text" id="cad-whatsapp" placeholder="21999998888"></div>
-    <div class="form-group"><label>CT / Academia *</label><select id="cad-ct"><option value="">Selecione o CT</option></select></div>
-    <div class="form-group"><label>Plano</label>
-        <select id="cad-plano"><option value="Mensal">Mensal</option><option value="Trimestral">Trimestral</option><option value="Semestral">Semestral</option><option value="Anual">Anual</option></select>
-    </div>
-    <div class="form-group"><label>Status Financeiro</label>
-        <select id="cad-status"><option value="Em dia">Em dia</option><option value="Inadimplente">Inadimplente</option><option value="Suspenso">Suspenso</option><option value="Trancada">Trancada</option></select>
-    </div>
-    <div class="form-group"><label>Perfil</label>
-        <select id="cad-perfil"><option value="Comercial">Aluno Comercial</option><option value="Atleta">Aluno Atleta</option><option value="Bolsista">Aluno Bolsista</option><option value="Instrutor">Aluno Instrutor</option><option value="Particular">Aluno Particular</option></select>
-    </div>
-    <div class="form-group"><label>Modalidade</label>
-        <select id="cad-modalidade"><option value="Muay Thai">Muay Thai</option><option value="Boxe">Boxe</option><option value="MMA">MMA</option></select>
-    </div>
-    <div class="form-group"><label>Graduação</label><input type="text" id="cad-graduacao" placeholder="Ex: FAIXA ROXA, CLASSE A"></div>
-    <h3>Documento de Identificação</h3>
-    <div class="form-group"><label>Tipo de Documento</label>
-        <select id="cad-doc-tipo"><option value="RG">RG / Identidade</option><option value="CNH">CNH</option><option value="Passaporte">Passaporte</option></select>
-    </div>
-    <div class="form-group"><label>Número do Documento</label><input type="text" id="cad-doc-numero" placeholder="Número"></div>
-    <div style="margin-bottom:16px">
-        <label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">Foto do Documento</label>
-        <div style="display:flex;gap:10px;align-items:center">
-            <div id="cad-doc-preview" class="avatar-placeholder" style="width:80px;height:80px;flex-shrink:0;font-size:10px">Foto Doc</div>
-            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
-                <button class="btn btn-accent" id="btn-cad-doc-camera" style="margin:0">📷 Câmera</button>
-                <button class="btn btn-accent" id="btn-cad-doc-arquivo" style="margin:0">🖼️ Galeria / Arquivo</button>
-                <input type="file" id="cad-doc-arquivo" accept="image/*,application/pdf" style="display:none">
+
+    <!-- MENU -->
+    <div id="p3" class="page">
+
+        <div class="brand-header">
+            <img src="logo.png" class="logo-oficial">
+            <h2>OGRO TEAM</h2>
+        </div>
+
+        <div class="grid-menu">
+
+            <div class="card-premium" data-nav="4">
+                <div class="card-icon">👤</div>
+                <div class="card-title">Alunos</div>
+                <div class="card-subtext">Cadastro completo</div>
             </div>
-        </div>
-        <div id="cad-doc-camera-div" style="display:none;margin-top:10px;border:2px solid #ba0f14;border-radius:8px;overflow:hidden">
-            <video id="cad-doc-video" style="width:100%;max-height:220px;background:#000" playsinline autoplay></video>
-            <button class="btn btn-primary" id="btn-cad-doc-capturar" style="border-radius:0;margin:0">📸 Capturar</button>
-        </div>
-    </div>
-    <div style="background:#121212;border:1px solid #262626;border-radius:6px;padding:12px;margin-bottom:16px">
-        <p style="color:#8a8a8a;font-size:11px;text-transform:uppercase;letter-spacing:1px">🔑 Senha Inicial</p>
-        <p style="color:#4ade80;font-size:13px;margin-top:4px">Gerada automaticamente. Enviada por e-mail e WhatsApp ao salvar.</p>
-    </div>
-    <button class="btn btn-primary" id="btn-salvar-aluno">Salvar e Emitir Acesso</button>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
 
-<!-- P5: INCLUIR CT -->
-<div id="p5" class="page">
-    <h2>Registrar Academia / CT</h2>
-    <div class="form-group"><label>Nome da Filial *</label><input type="text" id="ct-nome"></div>
-    <div class="form-group"><label>Professor(a) Responsável *</label><input type="text" id="ct-professor"></div>
-    <div class="form-group"><label>CNPJ / Registro</label><input type="text" id="ct-cnpj"></div>
-    <div class="form-group"><label>Líder Geral</label><input type="text" id="ct-responsavel"></div>
-    <div class="form-group"><label>Endereço</label><input type="text" id="ct-endereco"></div>
-    <div class="form-group"><label>Cidade / Estado</label><input type="text" id="ct-cidade"></div>
-    <div class="form-group"><label>WhatsApp Comercial</label><input type="text" id="ct-whatsapp"></div>
-    <div class="form-group"><label>Capacidade por Horário</label><input type="number" id="ct-capacidade"></div>
-    <div class="form-group"><label>Mensalidade Padrão (R$)</label><input type="number" id="ct-mensalidade"></div>
-    <h3>Contrato</h3>
-    <div class="form-group"><label>Data de Início</label><input type="date" id="ct-contrato-inicio"></div>
-    <div class="form-group"><label>Data de Término</label><input type="date" id="ct-contrato-fim"></div>
-    <div style="margin-bottom:16px">
-        <label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">Arquivo do Contrato</label>
-        <div style="display:flex;gap:10px;align-items:center">
-            <div id="ct-contrato-preview" class="avatar-placeholder" style="width:70px;height:70px;flex-shrink:0;font-size:10px">Contrato</div>
-            <button class="btn btn-accent" id="btn-ct-contrato-arquivo" style="margin:0;flex:1">📁 Anexar Contrato</button>
-            <input type="file" id="ct-contrato-file" accept="image/*,application/pdf" style="display:none">
-        </div>
-    </div>
-    <button class="btn btn-primary" id="btn-salvar-ct">Registrar Unidade</button>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
+            <div class="card-premium" data-nav="5">
+                <div class="card-icon">🏛️</div>
+                <div class="card-title">CT / Academia</div>
+                <div class="card-subtext">Gestão unidades</div>
+            </div>
 
-<!-- P6: DASHBOARD -->
-<div id="p6" class="page">
-    <h2>Dashboard Financeiro</h2>
-    <!-- Filtros -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-        <div class="form-group" style="margin:0">
-            <label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">CT</label>
-            <select id="dash-filtro-ct" onchange="renderDashboard()"><option value="">Todos</option></select>
+            <div class="card-premium" data-nav="6">
+                <div class="card-icon">📈</div>
+                <div class="card-title">Dashboard</div>
+                <div class="card-subtext">Financeiro</div>
+            </div>
+
+            <div class="card-premium" data-nav="7">
+                <div class="card-icon">💳</div>
+                <div class="card-title">Pagamentos</div>
+                <div class="card-subtext">Mensalidades</div>
+            </div>
+
+            <div class="card-premium" data-nav="8">
+                <div class="card-icon">📚</div>
+                <div class="card-title">Central</div>
+                <div class="card-subtext">Registros</div>
+            </div>
+
+            <div class="card-premium" data-nav="9">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Relatórios</div>
+                <div class="card-subtext">Filtros avançados</div>
+            </div>
+
+            <div class="card-premium" data-nav="10">
+                <div class="card-icon">🏆</div>
+                <div class="card-title">Campeonatos</div>
+                <div class="card-subtext">Eventos</div>
+            </div>
+
+            <div class="card-premium" data-nav="11">
+                <div class="card-icon">📄</div>
+                <div class="card-title">Autorizações</div>
+                <div class="card-subtext">Clínico</div>
+            </div>
+
+            <div class="card-premium" data-nav="12">
+                <div class="card-icon">⚙️</div>
+                <div class="card-title">Configurações</div>
+                <div class="card-subtext">Mensalidades</div>
+            </div>
+
         </div>
-        <div class="form-group" style="margin:0">
-            <label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Perfil</label>
-            <select id="dash-filtro-perfil" onchange="renderDashboard()">
-                <option value="Todos">Todos</option><option value="Comercial">Comercial</option>
-                <option value="Atleta">Atleta</option><option value="Bolsista">Bolsista</option>
-                <option value="Particular">Particular</option><option value="Instrutor">Instrutor</option>
+
+    </div>
+
+    <!-- ALUNOS -->
+    <div id="p4" class="page">
+
+        <h2>Cadastro de Aluno</h2>
+
+        <div class="form-group">
+            <label>Nome</label>
+            <input type="text" id="cad-nome">
+        </div>
+
+        <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" id="cad-email">
+        </div>
+
+        <div class="form-group">
+            <label>CT / Academia</label>
+            <select id="cad-ct"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Perfil</label>
+            <select id="cad-perfil">
+                <option>Comercial</option>
+                <option>Atleta</option>
+                <option>Bolsista</option>
+                <option>Instrutor</option>
             </select>
         </div>
-        <div class="form-group" style="margin:0;grid-column:span 2">
-            <label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Status</label>
-            <select id="dash-filtro-status" onchange="renderDashboard()">
-                <option value="Todos">Todos</option><option value="Em dia">Em dia</option>
-                <option value="Inadimplente">Inadimplente</option><option value="Suspenso">Suspenso</option><option value="Trancada">Trancada</option>
+
+        <div class="form-group">
+            <label>Status</label>
+            <select id="cad-status">
+                <option>Em dia</option>
+                <option>Inadimplente</option>
+                <option>Suspenso</option>
+                <option>Trancada</option>
             </select>
         </div>
-    </div>
-    <div class="metrics-top-panel">
-        <div class="metric-box"><label>Previsão</label><span id="dash-fat" class="text-success">R$ 0</span></div>
-        <div class="metric-box"><label>Inadimplência</label><span id="dash-inad" class="text-danger">R$ 0</span></div>
-        <div class="metric-box"><label>Caixa</label><span id="dash-rec" style="color:white">R$ 0</span></div>
-    </div>
-    <div class="grafico-wrapper">
-        <h3>Por Modalidade</h3>
-        <div class="modalidade-chart-item"><div class="chart-meta"><span>Muay Thai</span><span id="cnt-muay">0</span></div><div class="barra-container"><div id="bar-muay" class="barra-interna" style="background:#ba0f14;width:0%"></div></div></div>
-        <div class="modalidade-chart-item"><div class="chart-meta"><span>Boxe</span><span id="cnt-boxe">0</span></div><div class="barra-container"><div id="bar-boxe" class="barra-interna" style="background:#2563eb;width:0%"></div></div></div>
-        <div class="modalidade-chart-item"><div class="chart-meta"><span>MMA</span><span id="cnt-mma">0</span></div><div class="barra-container"><div id="bar-mma" class="barra-interna" style="background:#16a34a;width:0%"></div></div></div>
-    </div>
-    <h3>Devedores</h3>
-    <div id="dash-devedores" class="list-container"></div>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
 
-<!-- P7: EQUIPE -->
-<div id="p7" class="page">
-    <h2>Gestão de Equipe</h2>
-    <div class="form-group"><label>Nome Completo *</label><input type="text" id="adm-nome"></div>
-    <div class="form-group"><label>E-mail *</label><input type="email" id="adm-email"></div>
-    <div class="form-group"><label>Senha Provisória *</label><input type="password" id="adm-senha"></div>
-    <div class="form-group"><label>Nível de Acesso</label>
-        <select id="adm-nivel"><option value="Administrador Integral">Administrador Integral</option><option value="Apoio Administrativo">Apoio Administrativo</option></select>
-    </div>
-    <button class="btn btn-primary" id="btn-salvar-adm">Adicionar à Equipe</button>
-    <h3 style="margin-top:20px">Equipe Atual</h3>
-    <div id="lista-equipe" class="list-container"></div>
-    <h3>Promover Aluno</h3>
-    <div id="lista-promocao" class="list-container"></div>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
-
-<!-- P8: PRESENÇA -->
-<div id="p8" class="page">
-    <h2>⏱ Presença e Catraca</h2>
-    <button class="btn btn-primary" id="btn-camera-qr" style="background:#16a34a;margin-bottom:15px">📷 Câmera Traseira — Escanear QR</button>
-    <div id="reader" style="width:100%;max-width:350px;margin:0 auto;border:2px solid #ba0f14;border-radius:8px;display:none"></div>
-    <div style="margin:15px 0;text-align:center;font-weight:bold;color:#8a8a8a">— OU ENTRADA MANUAL —</div>
-    <div class="form-group"><label>CT / Unidade</label><select id="presenca-ct"></select></div>
-    <div class="form-group"><label>Atleta</label><select id="presenca-aluno"></select></div>
-    <button class="btn btn-primary" id="btn-checkin">✔️ Validar Check-in</button>
-    <h3 style="margin-top:20px">Frequência do Dia</h3>
-    <div id="mural-freq" class="list-container"></div>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
-
-<!-- P9: CENTRAL DE REGISTROS -->
-<div id="p9" class="page">
-    <h2>Central de Registros</h2>
-    <input type="text" id="busca-reativa" placeholder="🔍 Buscar atleta, CT ou professor..." class="input-busca">
-    <div id="lista-registros" class="list-container" style="max-height:400px"></div>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
-
-<!-- P10: EDIÇÃO DE ALUNO -->
-<div id="p10" class="page">
-    <h2>Editar Atleta</h2>
-    <div class="photo-upload-container">
-        <label id="edit-foto-preview" class="avatar-placeholder">Foto</label>
-        <input type="file" id="edit-foto-file" accept="image/*" style="display:none">
-    </div>
-    <input type="hidden" id="edit-id">
-    <div class="form-group"><label>Nome</label><input type="text" id="edit-nome"></div>
-    <div class="form-group"><label>E-mail</label><input type="email" id="edit-email"></div>
-    <div class="form-group"><label>WhatsApp</label><input type="text" id="edit-whatsapp"></div>
-    <div class="form-group"><label>CT / Academia</label><select id="edit-ct"><option value="">Selecione</option></select></div>
-    <div class="form-group"><label>Plano</label>
-        <select id="edit-plano"><option value="Mensal">Mensal</option><option value="Trimestral">Trimestral</option><option value="Semestral">Semestral</option><option value="Anual">Anual</option></select>
-    </div>
-    <div class="form-group"><label>Status Financeiro</label>
-        <select id="edit-status"><option value="Em dia">Em dia</option><option value="Inadimplente">Inadimplente</option><option value="Suspenso">Suspenso</option><option value="Trancada">Trancada</option></select>
-    </div>
-    <div class="form-group"><label>Perfil</label>
-        <select id="edit-perfil"><option value="Comercial">Comercial</option><option value="Atleta">Atleta</option><option value="Bolsista">Bolsista</option><option value="Instrutor">Instrutor</option><option value="Particular">Particular</option></select>
-    </div>
-    <div class="form-group"><label>Modalidade</label><input type="text" id="edit-modalidade"></div>
-    <div class="form-group"><label>Graduação</label><input type="text" id="edit-graduacao"></div>
-    <h3>Documento</h3>
-    <div class="form-group"><label>Tipo</label>
-        <select id="edit-doc-tipo"><option value="RG">RG</option><option value="CNH">CNH</option><option value="Passaporte">Passaporte</option></select>
-    </div>
-    <div class="form-group"><label>Número</label><input type="text" id="edit-doc-numero"></div>
-    <div style="margin-bottom:16px">
-        <label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">Foto do Documento</label>
-        <div style="display:flex;gap:10px;align-items:center">
-            <div id="edit-doc-preview" class="avatar-placeholder" style="width:70px;height:70px;flex-shrink:0;font-size:10px">Doc</div>
-            <button class="btn btn-accent" id="btn-edit-doc-arquivo" style="margin:0;flex:1">📁 Trocar Documento</button>
-            <input type="file" id="edit-doc-file" accept="image/*,application/pdf" style="display:none">
-        </div>
-    </div>
-    <h3>Campeonatos Registrados</h3>
-    <div id="edit-camp-lista" class="list-container"></div>
-    <h3>Autorizações</h3>
-    <div id="edit-aut-lista" class="list-container"></div>
-    <button class="btn btn-primary" id="btn-salvar-edicao">Salvar Modificações</button>
-    <button class="btn btn-accent" data-nav="9">Cancelar</button>
-</div>
-
-<!-- P11: RELATÓRIOS -->
-<div id="p11" class="page">
-    <h2>Relatórios</h2>
-    <div class="form-group"><label>Filtrar por Perfil</label>
-        <select id="rep-perfil"><option value="Todos">Todos</option><option value="Comercial">Comercial</option><option value="Atleta">Atleta</option><option value="Bolsista">Bolsista</option><option value="Particular">Particular</option></select>
-    </div>
-    <div class="form-group"><label>Filtrar por Modalidade</label>
-        <select id="rep-modalidade"><option value="Todas">Todas</option><option value="Muay Thai">Muay Thai</option><option value="Boxe">Boxe</option><option value="MMA">MMA</option></select>
-    </div>
-    <div class="form-group"><label>Filtrar por CT</label>
-        <select id="rep-ct" onchange="renderRelatorio()"><option value="">Todos os CTs</option></select>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button class="btn btn-primary" id="btn-filtrar-rel" style="margin:0;flex:1">🔍 Filtrar</button>
-        <button class="btn btn-accent" id="btn-exportar-rel" style="margin:0;flex:1">📋 Exportar</button>
-    </div>
-    <div class="metrics-top-panel" style="background:#121212;padding:10px;border-radius:6px;margin-bottom:10px">
-        <div><small style="color:#8a8a8a;font-size:10px;display:block">TOTAL</small><span id="rep-count" style="font-weight:bold;font-size:16px;color:#ba0f14">0</span></div>
-        <div><small style="color:#8a8a8a;font-size:10px;display:block">FINANCEIRO</small><span id="rep-soma" style="font-weight:bold;font-size:16px;color:#4ade80">R$ 0</span></div>
-    </div>
-    <div id="rep-lista" class="list-container" style="max-height:220px"></div>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
-
-<!-- P12: CARTEIRINHA DO ALUNO -->
-<div id="p12" class="page">
-    <div class="brand-header">
-        <div style="display:flex;justify-content:center;margin-bottom:10px">
-            <div id="aluno-avatar" class="avatar-placeholder" style="border-style:solid;cursor:default;width:90px;height:90px">👤</div>
-        </div>
-        <div class="tag-aluno-header" id="aluno-tag">[PERFIL]</div>
-        <h2 id="aluno-nome-tela">Nome do Aluno</h2>
-        <p id="aluno-grad-tela" style="color:#ba0f14;font-weight:bold;text-transform:uppercase">Modalidade — Graduação</p>
-    </div>
-    <div id="aluno-dados" class="dados-basicos-box"></div>
-    <div id="aluno-status" class="status-box"></div>
-    <div style="background:white;padding:15px;border-radius:8px;width:fit-content;margin:15px auto">
-        <div id="aluno-qr"></div>
-    </div>
-    <p style="text-align:center;font-size:11px;color:#8a8a8a;margin-bottom:10px">Apresente este QR na portaria</p>
-    <div class="metric-box" style="margin-bottom:14px">
-        <label>Frequência Total</label>
-        <span id="aluno-freq" style="font-size:22px;color:#ba0f14;font-weight:900">0</span> aulas
-    </div>
-    <!-- Pagamento Pix/Cartão -->
-    <div id="aluno-pix-area"></div>
-    <h3>Meus Campeonatos</h3>
-    <div id="aluno-camps" class="list-container"></div>
-    <button class="btn btn-accent" id="btn-sair-aluno">Sair da Conta</button>
-    <div id="rodape-aluno" class="rodape-aluno"></div>
-</div>
-
-<!-- P13: CONFIGURAÇÕES -->
-<div id="p13" class="page">
-    <h2>Configurações</h2>
-    <h3>Tabela Global de Preços</h3>
-    <div class="form-group"><label>Comercial (R$)</label><input type="number" id="conf-comercial"></div>
-    <div class="form-group"><label>Atleta (R$)</label><input type="number" id="conf-atleta"></div>
-    <div class="form-group"><label>Particular (R$)</label><input type="number" id="conf-particular"></div>
-    <div class="form-group"><label>Instrutor (R$)</label><input type="number" id="conf-instrutor"></div>
-    <div class="form-group"><label>Bolsista (R$)</label><input type="number" id="conf-bolsista"></div>
-    <button class="btn btn-primary" id="btn-salvar-precos">Atualizar Preços Globais</button>
-    <h3 style="margin-top:20px">Preço por CT e Perfil</h3>
-    <p style="color:#8a8a8a;font-size:12px;margin-bottom:10px">Estes valores têm prioridade sobre a tabela global.</p>
-    <div class="form-group"><label>Selecione o CT</label><select id="conf-ct-sel"><option value="">Selecione</option></select></div>
-    <div class="form-group"><label>Comercial (R$)</label><input type="number" id="conf-ct-comercial" placeholder="Deixe vazio para usar global"></div>
-    <div class="form-group"><label>Atleta (R$)</label><input type="number" id="conf-ct-atleta" placeholder="Deixe vazio para usar global"></div>
-    <div class="form-group"><label>Particular (R$)</label><input type="number" id="conf-ct-particular" placeholder="Deixe vazio para usar global"></div>
-    <div class="form-group"><label>Instrutor (R$)</label><input type="number" id="conf-ct-instrutor" placeholder="Deixe vazio para usar global"></div>
-    <div class="form-group"><label>Bolsista (R$)</label><input type="number" id="conf-ct-bolsista" placeholder="Deixe vazio para usar global"></div>
-    <button class="btn btn-primary" id="btn-salvar-preco-ct">Salvar Preços do CT</button>
-    <h3 style="margin-top:20px">Auditoria</h3>
-    <div id="timeline-auditoria" class="timeline"></div>
-    <button class="btn btn-accent" data-nav="3" style="margin-top:15px">← Voltar</button>
-</div>
-
-<!-- P14: CAMPEONATOS E AUTORIZAÇÕES -->
-<div id="p14" class="page">
-    <h2>🏆 Campeonatos e Autorizações</h2>
-    <div class="form-group"><label>Selecione o Atleta</label><select id="camp-atleta" onchange="carregarAtleta()"><option value="">Selecione</option></select></div>
-    <h3>Registrar Campeonato</h3>
-    <div class="form-group"><label>Nome do Campeonato *</label><input type="text" id="camp-nome" placeholder="Ex: Copa RJ 2026"></div>
-    <div class="form-group"><label>Data</label><input type="date" id="camp-data"></div>
-    <div class="form-group"><label>Local</label><input type="text" id="camp-local" placeholder="Cidade/Estado"></div>
-    <div class="form-group"><label>Resultado</label>
-        <select id="camp-resultado"><option value="Vitória">🏆 Vitória</option><option value="Derrota">❌ Derrota</option><option value="Empate">🤝 Empate</option><option value="W.O">⚠️ W.O</option></select>
-    </div>
-    <button class="btn btn-primary" id="btn-salvar-camp">Registrar Campeonato</button>
-    <div id="camp-lista" class="list-container" style="margin-top:10px"></div>
-    <h3>Adicionar Autorização</h3>
-    <div class="form-group"><label>Descrição *</label><input type="text" id="aut-desc" placeholder="Ex: Autorização dos pais"></div>
-    <div style="margin-bottom:16px">
-        <label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">Documento (foto ou arquivo)</label>
-        <div style="display:flex;gap:10px;align-items:center">
-            <div id="aut-preview" class="avatar-placeholder" style="width:80px;height:80px;flex-shrink:0;font-size:10px">Doc</div>
-            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
-                <button class="btn btn-accent" id="btn-aut-camera" style="margin:0">📷 Câmera</button>
-                <button class="btn btn-accent" id="btn-aut-arquivo" style="margin:0">📁 Arquivo / Galeria</button>
-                <input type="file" id="aut-arquivo-input" accept="image/*,application/pdf" style="display:none">
+        <div id="motivo-suspensao-box" style="display:none">
+            <div class="form-group">
+                <label>Motivo da Suspensão</label>
+                <input type="text" id="motivo-suspensao">
             </div>
         </div>
-        <div id="aut-camera-div" style="display:none;margin-top:10px;border:2px solid #ba0f14;border-radius:8px;overflow:hidden">
-            <video id="aut-video" style="width:100%;max-height:220px;background:#000" playsinline autoplay></video>
-            <button class="btn btn-primary" id="btn-aut-capturar" style="border-radius:0;margin:0">📸 Capturar Foto</button>
+
+        <button class="btn btn-primary" onclick="salvarAluno()">
+            Salvar Aluno
+        </button>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
+    </div>
+
+    <!-- CT -->
+    <div id="p5" class="page">
+
+        <h2>Registrar Academia / CT</h2>
+
+        <div class="form-group">
+            <label>Nome da Unidade</label>
+            <input type="text" id="ct-nome">
         </div>
-    </div>
-    <button class="btn btn-primary" id="btn-salvar-aut">Salvar Autorização</button>
-    <div id="aut-lista" class="list-container" style="margin-top:10px"></div>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
 
-<!-- P15: PAGAMENTOS -->
-<div id="p15" class="page">
-    <h2>💳 Pagamentos</h2>
-    <!-- Painel de totais -->
-    <div class="metrics-top-panel" style="margin-bottom:14px">
-        <div class="metric-box"><label>Filtrado</label><span id="pag-total-filtro" class="text-success">R$ 0</span></div>
-        <div class="metric-box"><label>Total Geral</label><span id="pag-total-geral" style="color:#4ade80;font-weight:800">R$ 0</span></div>
-        <div class="metric-box"><label>Registros</label><span id="pag-count" style="color:white;font-weight:800">0</span></div>
-    </div>
-    <!-- Novo pagamento -->
-    <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button class="btn btn-primary" id="btn-pag-pix" style="margin:0;flex:1">💠 Pix</button>
-        <button class="btn btn-accent" id="btn-pag-cartao" style="margin:0;flex:1;border-color:#2563eb;color:#60a5fa">💳 Cartão</button>
-    </div>
-    <div id="form-novo-pagamento" style="display:none;background:#121212;border:1px solid #262626;border-radius:8px;padding:14px;margin-bottom:14px">
-        <h3 style="margin-top:0">Registrar Pagamento</h3>
-        <div class="form-group"><label>Aluno</label><select id="pag-aluno-sel"><option value="">Selecione</option></select></div>
-        <div class="form-group"><label>CT</label><select id="pag-ct-sel"><option value="">Selecione</option></select></div>
-        <div class="form-group"><label>Valor (R$)</label><input type="number" id="pag-valor" placeholder="0.00"></div>
-        <input type="hidden" id="pag-metodo">
-        <div class="form-group"><label>Data</label><input type="date" id="pag-data"></div>
-        <button class="btn btn-primary" id="btn-salvar-pag" style="margin-top:0">✅ Confirmar Pagamento</button>
-    </div>
-    <!-- Filtros -->
-    <h3>Filtros de Busca</h3>
-    <div class="form-group"><label>Nome do Aluno</label><input type="text" id="pag-filtro-nome" placeholder="Buscar por nome"></div>
-    <div class="form-group"><label>CT</label><select id="pag-filtro-ct"><option value="">Todos</option></select></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <div class="form-group" style="margin:0"><label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Data De</label><input type="date" id="pag-filtro-de"></div>
-        <div class="form-group" style="margin:0"><label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Data Até</label><input type="date" id="pag-filtro-ate"></div>
-        <div class="form-group" style="margin:0"><label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Valor Mín (R$)</label><input type="number" id="pag-filtro-val-min" placeholder="0"></div>
-        <div class="form-group" style="margin:0"><label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Valor Máx (R$)</label><input type="number" id="pag-filtro-val-max" placeholder="∞"></div>
-    </div>
-    <button class="btn btn-primary" id="btn-filtrar-pag" style="margin-bottom:10px">🔍 Filtrar Pagamentos</button>
-    <div id="pag-lista" class="list-container" style="max-height:300px"></div>
-    <button class="btn btn-accent" data-nav="3">Voltar</button>
-</div>
-
-<!-- P16: EDIÇÃO DE CT -->
-<div id="p16" class="page">
-    <h2>Editar CT / Academia</h2>
-    <input type="hidden" id="edit-ct-id">
-    <div class="form-group"><label>Nome da Filial</label><input type="text" id="edit-ct-nome"></div>
-    <div class="form-group"><label>Professor Responsável</label><input type="text" id="edit-ct-professor"></div>
-    <div class="form-group"><label>CNPJ</label><input type="text" id="edit-ct-cnpj"></div>
-    <div class="form-group"><label>Líder Geral</label><input type="text" id="edit-ct-responsavel"></div>
-    <div class="form-group"><label>Endereço</label><input type="text" id="edit-ct-endereco"></div>
-    <div class="form-group"><label>Cidade / Estado</label><input type="text" id="edit-ct-cidade"></div>
-    <div class="form-group"><label>WhatsApp</label><input type="text" id="edit-ct-whatsapp"></div>
-    <div class="form-group"><label>Capacidade</label><input type="number" id="edit-ct-capacidade"></div>
-    <div class="form-group"><label>Mensalidade Padrão (R$)</label><input type="number" id="edit-ct-mensalidade"></div>
-    <h3>Contrato</h3>
-    <div class="form-group"><label>Data de Início</label><input type="date" id="edit-ct-inicio"></div>
-    <div class="form-group"><label>Data de Término</label><input type="date" id="edit-ct-fim"></div>
-    <button class="btn btn-accent" id="btn-prorrogar-ct" style="background:#262626">📅 Prorrogar Contrato</button>
-    <button class="btn btn-primary" id="btn-salvar-edit-ct">Salvar Alterações</button>
-    <button class="btn btn-accent" data-nav="9">Cancelar</button>
-</div>
-
-<!-- MODAL GENÉRICO -->
-<div id="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;justify-content:center;align-items:center;padding:20px">
-    <div style="background:#121212;border:2px solid #ba0f14;border-radius:12px;padding:24px;max-width:380px;width:100%;text-align:center">
-        <h3 id="modal-titulo" style="color:#ba0f14;border:none;padding:0;margin-bottom:12px;font-size:16px">MENSAGEM</h3>
-        <div style="background:#0a0a0a;border:1px solid #262626;border-radius:8px;padding:14px;margin-bottom:14px;text-align:left;max-height:300px;overflow-y:auto">
-            <div id="modal-texto" style="color:#fff;font-size:13px;line-height:1.7;white-space:pre-line;user-select:text;-webkit-user-select:text"></div>
+        <div class="form-group">
+            <label>Responsável</label>
+            <input type="text" id="ct-responsavel">
         </div>
-        <button class="btn btn-primary" id="btn-modal-copiar" style="margin-bottom:8px">📋 Copiar</button>
-        <button class="btn btn-accent" id="btn-modal-fechar">Fechar</button>
+
+        <div class="form-group">
+            <label>Instrutor</label>
+            <input type="text" id="ct-instrutor">
+        </div>
+
+        <div class="form-group">
+            <label>Mensalidade</label>
+            <input type="number" id="ct-mensalidade">
+        </div>
+
+        <button class="btn btn-primary" onclick="salvarCT()">
+            Salvar CT
+        </button>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
     </div>
+
+    <!-- DASHBOARD -->
+    <div id="p6" class="page">
+
+        <h2>Dashboard</h2>
+
+        <div class="dashboard-grid-top">
+
+            <div class="dashboard-card">
+                <span>Faturamento</span>
+                <strong id="dash-fat">R$ 0</strong>
+            </div>
+
+            <div class="dashboard-card success-card">
+                <span>Recebido</span>
+                <strong id="dash-rec">R$ 0</strong>
+            </div>
+
+            <div class="dashboard-card danger-card">
+                <span>Inadimplência</span>
+                <strong id="dash-inad">R$ 0</strong>
+            </div>
+
+        </div>
+
+        <div class="dashboard-chart-card">
+            <h3>📈 Financeiro</h3>
+
+            <div class="finance-bar-bg">
+                <div class="finance-bar-fill finance-green" id="finance-ok"></div>
+            </div>
+
+            <br>
+
+            <div class="finance-bar-bg">
+                <div class="finance-bar-fill finance-red" id="finance-bad"></div>
+            </div>
+        </div>
+
+        <div class="dashboard-chart-card">
+            <h3>📅 Presença Semanal</h3>
+
+            <div class="presenca-semanal-grid">
+                <div class="presenca-box"><span>SEG</span><strong>12</strong></div>
+                <div class="presenca-box"><span>TER</span><strong>20</strong></div>
+                <div class="presenca-box"><span>QUA</span><strong>18</strong></div>
+                <div class="presenca-box"><span>QUI</span><strong>21</strong></div>
+                <div class="presenca-box"><span>SEX</span><strong>16</strong></div>
+                <div class="presenca-box"><span>SAB</span><strong>25</strong></div>
+            </div>
+
+        </div>
+
+        <div class="dashboard-chart-card">
+
+            <h3>📢 Enviar Aviso</h3>
+
+            <div class="form-group">
+                <label>CT / Academia</label>
+                <select id="aviso-ct"></select>
+            </div>
+
+            <div class="form-group">
+                <label>Título</label>
+                <input type="text" id="aviso-titulo">
+            </div>
+
+            <div class="form-group">
+                <label>Mensagem</label>
+                <input type="text" id="aviso-texto">
+            </div>
+
+            <button class="btn btn-primary" onclick="enviarAvisoGeral()">
+                Enviar Aviso
+            </button>
+
+        </div>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
+    </div>
+
+    <!-- PAGAMENTOS -->
+    <div id="p7" class="page">
+
+        <h2>Pagamentos</h2>
+
+        <div class="form-group">
+            <label>CT / Academia</label>
+            <select id="pag-ct" onchange="atualizarAlunosPagamento()"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Aluno</label>
+            <select id="pag-aluno"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Valor</label>
+            <input type="number" id="pag-valor">
+        </div>
+
+        <button class="btn btn-primary" onclick="registrarPagamento()">
+            Registrar
+        </button>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
+    </div>
+
+    <!-- CENTRAL -->
+    <div id="p8" class="page">
+
+        <h2>Central de Registros</h2>
+
+        <div class="form-group">
+            <label>CT / Academia</label>
+            <select id="filtro-registro-ct"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Aluno</label>
+            <select id="filtro-registro-aluno"></select>
+        </div>
+
+        <div id="lista-registros" class="list-container"></div>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
+    </div>
+
+    <!-- RELATÓRIOS -->
+    <div id="p9" class="page">
+
+        <h2>Relatórios</h2>
+
+        <div class="form-group">
+            <label>Status Financeiro</label>
+            <select id="rel-status">
+                <option>Todos</option>
+                <option>Em dia</option>
+                <option>Inadimplente</option>
+                <option>Suspenso</option>
+            </select>
+        </div>
+
+        <div id="relatorio-area"></div>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
+    </div>
+
+    <!-- CAMPEONATOS -->
+    <div id="p10" class="page">
+
+        <h2>Campeonatos</h2>
+
+        <div class="form-group">
+            <label>Evento</label>
+            <input type="text" id="camp-evento">
+        </div>
+
+        <div class="form-group">
+            <label>Anexo</label>
+            <input type="file">
+        </div>
+
+        <button class="btn btn-primary">
+            Salvar Campeonato
+        </button>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
+    </div>
+
+    <!-- AUTORIZAÇÕES -->
+    <div id="p11" class="page">
+
+        <h2>Autorizações e Clínico</h2>
+
+        <div class="form-group">
+            <label>Aluno</label>
+            <select id="aut-aluno"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Autorização</label>
+            <input type="text">
+        </div>
+
+        <div class="form-group">
+            <label>Condição Clínica</label>
+            <input type="text">
+        </div>
+
+        <button class="btn btn-primary">
+            Salvar
+        </button>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
+    </div>
+
+    <!-- CONFIG -->
+    <div id="p12" class="page">
+
+        <h2>Configurações</h2>
+
+        <div class="form-group">
+            <label>CT / Academia</label>
+            <select id="conf-ct"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Perfil do Aluno</label>
+            <select id="conf-perfil">
+                <option>Comercial</option>
+                <option>Atleta</option>
+                <option>Bolsista</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Valor</label>
+            <input type="number" id="conf-valor">
+        </div>
+
+        <button class="btn btn-primary" onclick="alterarMensalidade()">
+            Atualizar
+        </button>
+
+        <button class="btn btn-accent" data-nav="3">
+            Voltar
+        </button>
+
+    </div>
+
 </div>
 
-<!-- RODAPÉ ADMIN -->
-<div class="footer-fixo">
-    <button class="btn-footer" data-nav="9">🗂️ Central de Cadastros</button>
-</div>
-
-</div>
 <script src="script.js"></script>
 </body>
 </html>
