@@ -298,6 +298,10 @@
     <div class="form-group"><label>Status Financeiro</label>
         <select id="rep-status"><option value="Todos">Todos</option><option value="Em dia">Em dia</option><option value="Inadimplente">Inadimplente</option><option value="Suspenso">Suspenso</option><option value="Trancada">Trancada</option></select>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div class="form-group" style="margin:0"><label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Data De</label><input type="date" id="rep-data-de"></div>
+        <div class="form-group" style="margin:0"><label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Data Até</label><input type="date" id="rep-data-ate"></div>
+    </div>
     <div style="display:flex;gap:8px;margin-bottom:10px">
         <button class="btn btn-primary" id="btn-filtrar-rel" style="margin:0;flex:1">🔍 Filtrar</button>
         <button class="btn btn-accent" id="btn-exportar-rel" style="margin:0;flex:1">📋 Exportar</button>
@@ -436,7 +440,7 @@
     </div>
     <h3>Filtros</h3>
     <div class="form-group"><label>CT/Academia</label><select id="pag-filtro-ct" onchange="popularAlunosPorCT('pag-filtro-aluno', this.value); renderPagamentos()"><option value="">Todos os CTs</option></select></div>
-    <div class="form-group"><label>Aluno</label><select id="pag-filtro-aluno"><option value="">Todos os alunos</option></select></div>
+    <div class="form-group"><label>Aluno (do CT selecionado)</label><select id="pag-filtro-aluno"><option value="">Todos os alunos</option></select></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
         <div class="form-group" style="margin:0"><label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Data De</label><input type="date" id="pag-filtro-de"></div>
         <div class="form-group" style="margin:0"><label style="font-size:10px;color:#8a8a8a;text-transform:uppercase">Data Até</label><input type="date" id="pag-filtro-ate"></div>
