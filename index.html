@@ -1,112 +1,113 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OGRO TEAM</title>
-
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OGRO TEAM</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="app">
+<div class="app-container">
 
-        <!-- CONFIGURAÇÕES -->
-        <section id="configuracoes">
-            <h2>Configurações</h2>
+  <header class="brand-header">
+    <h1>OGRO TEAM</h1>
+    <p>Sistema de Gestão</p>
+  </header>
 
-            <input id="conf-comercial" type="number" placeholder="Comercial">
-            <input id="conf-atleta" type="number" placeholder="Atleta">
-            <input id="conf-particular" type="number" placeholder="Particular">
-            <input id="conf-instrutor" type="number" placeholder="Instrutor">
-            <input id="conf-bolsista" type="number" placeholder="Bolsista">
+  <section class="page active">
 
-            <select id="conf-ct-sel"></select>
+    <h2>Configurações</h2>
 
-            <input id="conf-ct-comercial" type="number" placeholder="Comercial CT">
-            <input id="conf-ct-atleta" type="number" placeholder="Atleta CT">
-            <input id="conf-ct-particular" type="number" placeholder="Particular CT">
-            <input id="conf-ct-instrutor" type="number" placeholder="Instrutor CT">
-            <input id="conf-ct-bolsista" type="number" placeholder="Bolsista CT">
+    <div class="form-grid">
+      <input id="conf-comercial" type="number" placeholder="Comercial">
+      <input id="conf-atleta" type="number" placeholder="Atleta">
+      <input id="conf-particular" type="number" placeholder="Particular">
+      <input id="conf-instrutor" type="number" placeholder="Instrutor">
+      <input id="conf-bolsista" type="number" placeholder="Bolsista">
+    </div>
 
-            <button onclick="salvarPrecoCT()">Salvar Preços CT</button>
+    <h3>Preços por CT</h3>
 
-            <div id="timeline-auditoria"></div>
-        </section>
+    <select id="conf-ct-sel" onchange="carregarPrecoCT()"></select>
 
+    <div class="form-grid mt">
+      <input id="conf-ct-comercial" type="number" placeholder="Comercial CT">
+      <input id="conf-ct-atleta" type="number" placeholder="Atleta CT">
+      <input id="conf-ct-particular" type="number" placeholder="Particular CT">
+      <input id="conf-ct-instrutor" type="number" placeholder="Instrutor CT">
+      <input id="conf-ct-bolsista" type="number" placeholder="Bolsista CT">
+    </div>
 
-        <!-- CAMPEONATOS -->
-        <section>
-            <h2>Campeonatos</h2>
+    <button class="btn btn-primary" onclick="salvarPrecoCT()">
+      Salvar Preços CT
+    </button>
 
-            <select id="camp-atleta"></select>
+    <h2>Campeonatos</h2>
 
-            <div id="camp-lista"></div>
-            <div id="aut-lista"></div>
-        </section>
+    <select id="camp-atleta" onchange="carregarAtleta()"></select>
 
+    <div class="list-container" id="camp-lista"></div>
 
-        <!-- PAGAMENTOS -->
-        <section>
-            <h2>Pagamentos</h2>
+    <h2>Pagamentos</h2>
 
-            <input id="pag-filtro-nome" placeholder="Buscar aluno">
+    <input id="pag-filtro-nome" class="input-busca" type="text" placeholder="Buscar aluno" onkeyup="renderPagamentos()">
 
-            <select id="pag-filtro-ct"></select>
+    <div class="metricas">
+      <div>
+        <span>Total filtro</span>
+        <strong id="pag-total-filtro">R$ 0,00</strong>
+      </div>
 
-            <input id="pag-filtro-de" type="date">
-            <input id="pag-filtro-ate" type="date">
+      <div>
+        <span>Total geral</span>
+        <strong id="pag-total-geral">R$ 0,00</strong>
+      </div>
 
-            <input id="pag-filtro-val-min" type="number" placeholder="Valor mínimo">
-            <input id="pag-filtro-val-max" type="number" placeholder="Valor máximo">
+      <div>
+        <span>Quantidade</span>
+        <strong id="pag-count">0</strong>
+      </div>
+    </div>
 
-            <div>
-                Total filtro: <span id="pag-total-filtro"></span>
-            </div>
+    <div class="actions-row">
+      <button class="btn btn-verde" onclick="abrirFormPagamento('Pix')">
+        Novo PIX
+      </button>
 
-            <div>
-                Total geral: <span id="pag-total-geral"></span>
-            </div>
+      <button class="btn btn-primary" onclick="abrirFormPagamento('Dinheiro')">
+        Novo Dinheiro
+      </button>
+    </div>
 
-            <div>
-                Quantidade: <span id="pag-count"></span>
-            </div>
+    <div id="form-novo-pagamento" class="hidden-box">
 
-            <div id="pag-lista"></div>
+      <select id="pag-aluno-sel"></select>
 
-            <button onclick="abrirFormPagamento('Pix')">Novo PIX</button>
-            <button onclick="abrirFormPagamento('Dinheiro')">Novo Dinheiro</button>
+      <select id="pag-ct-sel"></select>
 
-            <div id="form-novo-pagamento" style="display:none">
+      <input id="pag-valor" type="number" placeholder="Valor">
 
-                <select id="pag-aluno-sel"></select>
-                <select id="pag-ct-sel"></select>
+      <input id="pag-data" type="date">
 
-                <input id="pag-valor" type="number" step="0.01">
-                <input id="pag-data" type="date">
+      <input id="pag-metodo" type="hidden">
 
-                <input id="pag-metodo" type="hidden">
-
-                <button onclick="registrarPagamento()">
-                    Registrar
-                </button>
-            </div>
-        </section>
-
-
-        <!-- MODAL -->
-        <div id="modal" class="modal hidden">
-            <div class="modal-content">
-                <h3 id="modal-title"></h3>
-                <p id="modal-message"></p>
-                <button onclick="fecharModal()">Fechar</button>
-            </div>
-        </div>
+      <button class="btn btn-primary" onclick="registrarPagamento()">
+        Registrar
+      </button>
 
     </div>
 
-    <script type="module" src="js/firebase.js"></script>
-    <script src="js/script.js"></script>
+    <div class="list-container" id="pag-lista"></div>
 
+    <h2>Auditoria</h2>
+
+    <div class="timeline" id="timeline-auditoria"></div>
+
+  </section>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
