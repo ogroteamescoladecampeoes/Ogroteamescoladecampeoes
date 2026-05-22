@@ -510,7 +510,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // DASHBOARD — VISUAL RICO
 // ========================================================
 function renderDashboard() {
-    var filtCT   = document.getElementById('dash-filtro-ct').value;
+    // Popula filtro CT com CTs cadastrados
+    var selDashCT = document.getElementById('dash-filtro-ct');
+    var valAtualCT = selDashCT.value;
+    selDashCT.innerHTML = '<option value="">Todos os CTs</option>';
+    DB.cts.forEach(function(c) { selDashCT.innerHTML += '<option value="' + c.id + '">' + c.nome + '</option>'; });
+    if (valAtualCT) selDashCT.value = valAtualCT;
+
+    var filtCT   = selDashCT.value;
     var filtPerf = document.getElementById('dash-filtro-perfil').value;
     var filtStat = document.getElementById('dash-filtro-status').value;
 
@@ -635,29 +642,47 @@ function renderEquipe() {
             (a.id !== "1" ? '<button class="btn btn-vermelho" style="padding:4px 8px;font-size:11px;width:auto" onclick="revogarAdmin(\'' + a.id + '\')">Revogar</button>' : '<small style="color:#16a34a">Master</small>');
         lista.appendChild(div);
     });
+    // Só mostra na lista de promoção alunos que NÃO estão promovidos
     var prom = document.getElementById('lista-promocao'); prom.innerHTML = "";
-    DB.alunos.forEach(function(a) {
-        var ctNome = getCTNome(a.ctId);
-        var div = document.createElement('div'); div.className = "item-registro";
-        div.innerHTML = '<div><strong>' + a.nome + '</strong><br><small style="color:#8a8a8a">' + a.perfil + ' | ' + ctNome + '</small></div>' +
-            '<div style="display:flex;gap:4px">' +
-            (a.perfil !== "Instrutor" ? '<button class="btn btn-primary" style="padding:4px 6px;font-size:10px;width:auto" onclick="promover(\'' + a.id + '\',\'Administrador Integral\')">Admin</button>' : '') +
-            '<button class="btn btn-accent" style="padding:4px 6px;font-size:10px;width:auto;background:#262626" onclick="promover(\'' + a.id + '\',\'Apoio Administrativo\')">Apoio</button></div>';
-        prom.appendChild(div);
-    });
+    var alunosNaoPromovidos = DB.alunos.filter(function(a) { return !a.promovido; });
+    if (alunosNaoPromovidos.length === 0) {
+        prom.innerHTML = "<p style='color:#8a8a8a;text-align:center;padding:12px;font-size:12px'>Todos os alunos já foram promovidos.</p>";
+    } else {
+        alunosNaoPromovidos.forEach(function(a) {
+            var ctNome = getCTNome(a.ctId);
+            var div = document.createElement('div'); div.className = "item-registro";
+            div.innerHTML = '<div><strong>' + a.nome + '</strong><br><small style="color:#8a8a8a">' + a.perfil + ' | ' + ctNome + '</small></div>' +
+                '<div style="display:flex;gap:4px">' +
+                (a.perfil !== "Instrutor" ? '<button class="btn btn-primary" style="padding:4px 6px;font-size:10px;width:auto" onclick="promover(\'' + a.id + '\',\'Administrador Integral\')">Admin</button>' : '') +
+                '<button class="btn btn-accent" style="padding:4px 6px;font-size:10px;width:auto;background:#262626" onclick="promover(\'' + a.id + '\',\'Apoio Administrativo\')">Apoio</button></div>';
+            prom.appendChild(div);
+        });
+    }
 }
 
 window.revogarAdmin = function(id) {
     if (!confirm("Revogar acesso?")) return;
     var idx = DB.admins.findIndex(function(a) { return a.id === id; });
-    if (idx !== -1) { log("Mestre","Revogação", DB.admins[idx].nome + " removido."); DB.admins.splice(idx,1); }
+    if (idx !== -1) {
+        var adminRemovido = DB.admins[idx];
+        log("Mestre","Revogação", adminRemovido.nome + " removido.");
+        // Se esse admin veio de uma promoção de aluno, desmarca o aluno
+        if (adminRemovido.alunoId) {
+            var aluno = DB.alunos.find(function(a) { return a.id === adminRemovido.alunoId; });
+            if (aluno) { aluno.promovido = false; aluno.nivelAdmin = ""; }
+        }
+        DB.admins.splice(idx, 1);
+    }
     renderEquipe();
 };
 
 window.promover = function(idAluno, nivel) {
     var al = DB.alunos.find(function(a) { return a.id === idAluno; }); if (!al) return;
     if (al.perfil === "Instrutor" && nivel === "Administrador Integral") { nivel = "Apoio Administrativo"; alert("Instrutor promovido como Apoio Administrativo."); }
-    DB.admins.push({ id: String(Date.now()), nome: al.nome, email: al.email || al.nome.replace(/\s/g,'').toLowerCase()+'@ogroteam.com', senha: al.senha||"123", nivel: nivel });
+    // Marca o aluno como promovido para sumir da lista
+    al.promovido = true;
+    al.nivelAdmin = nivel;
+    DB.admins.push({ id: String(Date.now()), alunoId: al.id, nome: al.nome, email: al.email || al.nome.replace(/\s/g,'').toLowerCase()+'@ogroteam.com', senha: al.senha||"123", nivel: nivel });
     log("Mestre","Promoção", al.nome + " → " + nivel); renderEquipe();
 };
 
@@ -696,7 +721,14 @@ function processarQR(idAluno) {
 // CENTRAL DE REGISTROS
 // ========================================================
 function renderRegistros() {
-    var filtCT    = document.getElementById('filtro-ct-registros').value;
+    // Popular select de CT com os cadastrados
+    var selCTReg = document.getElementById('filtro-ct-registros');
+    var valCTReg = selCTReg.value;
+    selCTReg.innerHTML = '<option value="">Todos os CTs</option>';
+    DB.cts.forEach(function(c) { selCTReg.innerHTML += '<option value="' + c.id + '">' + c.nome + '</option>'; });
+    if (valCTReg) selCTReg.value = valCTReg;
+
+    var filtCT    = selCTReg.value;
     var filtAluno = document.getElementById('filtro-aluno-registros').value.toLowerCase();
     var busca     = document.getElementById('busca-reativa').value.toLowerCase();
     var c = document.getElementById('lista-registros'); c.innerHTML = "";
@@ -848,16 +880,37 @@ window.excluirCT = function(id) {
 // RELATÓRIOS
 // ========================================================
 function renderRelatorio() {
-    var perfil = document.getElementById('rep-perfil').value;
-    var mod    = document.getElementById('rep-modalidade').value;
-    var ctFilt = document.getElementById('rep-ct').value;
-    var stFilt = document.getElementById('rep-status').value;
-    var lista  = document.getElementById('rep-lista'); lista.innerHTML = "";
+    // Popular select de CT com os cadastrados
+    var selRepCT = document.getElementById('rep-ct');
+    var valCTAtual = selRepCT.value;
+    selRepCT.innerHTML = '<option value="">Todos os CTs</option>';
+    DB.cts.forEach(function(c) { selRepCT.innerHTML += '<option value="' + c.id + '">' + c.nome + '</option>'; });
+    if (valCTAtual) selRepCT.value = valCTAtual;
+
+    var perfil  = document.getElementById('rep-perfil').value;
+    var mod     = document.getElementById('rep-modalidade').value;
+    var ctFilt  = selRepCT.value;
+    var stFilt  = document.getElementById('rep-status').value;
+    var dataDe  = document.getElementById('rep-data-de').value;
+    var dataAte = document.getElementById('rep-data-ate').value;
+    var lista   = document.getElementById('rep-lista'); lista.innerHTML = "";
+
     var f = DB.alunos;
     if (perfil !== "Todos") f = f.filter(function(a) { return a.perfil === perfil; });
     if (mod !== "Todas")    f = f.filter(function(a) { return a.modalidade === mod; });
     if (ctFilt)             f = f.filter(function(a) { return a.ctId === ctFilt; });
     if (stFilt !== "Todos") f = f.filter(function(a) { return a.status === stFilt; });
+
+    // Filtro de data: filtra pagamentos no período e retorna só alunos que pagaram nesse período
+    if (dataDe || dataAte) {
+        var alunosComPag = DB.pagamentos.filter(function(p) {
+            var deOk  = !dataDe  || p.data >= dataDe;
+            var ateOk = !dataAte || p.data <= dataAte;
+            return deOk && ateOk;
+        }).map(function(p) { return p.alunoId; });
+        f = f.filter(function(a) { return alunosComPag.indexOf(a.id) !== -1; });
+    }
+
     document.getElementById('rep-count').textContent = f.length;
     var soma = 0; f.forEach(function(a) { soma += getMensalidadeAluno(a); });
     document.getElementById('rep-soma').textContent = "R$ " + soma.toFixed(2);
@@ -873,17 +926,26 @@ function renderRelatorio() {
 }
 
 function exportarRelatorio() {
-    var perfil = document.getElementById('rep-perfil').value;
-    var mod    = document.getElementById('rep-modalidade').value;
-    var ctFilt = document.getElementById('rep-ct').value;
-    var stFilt = document.getElementById('rep-status').value;
+    var perfil  = document.getElementById('rep-perfil').value;
+    var mod     = document.getElementById('rep-modalidade').value;
+    var ctFilt  = document.getElementById('rep-ct').value;
+    var stFilt  = document.getElementById('rep-status').value;
+    var dataDe  = document.getElementById('rep-data-de').value;
+    var dataAte = document.getElementById('rep-data-ate').value;
     var f = DB.alunos;
     if (perfil !== "Todos") f = f.filter(function(a) { return a.perfil === perfil; });
     if (mod !== "Todas")    f = f.filter(function(a) { return a.modalidade === mod; });
     if (ctFilt)             f = f.filter(function(a) { return a.ctId === ctFilt; });
     if (stFilt !== "Todos") f = f.filter(function(a) { return a.status === stFilt; });
+    if (dataDe || dataAte) {
+        var alunosComPag = DB.pagamentos.filter(function(p) {
+            return (!dataDe || p.data >= dataDe) && (!dataAte || p.data <= dataAte);
+        }).map(function(p) { return p.alunoId; });
+        f = f.filter(function(a) { return alunosComPag.indexOf(a.id) !== -1; });
+    }
     if (f.length === 0) { mostrarModal("ATENÇÃO", "Nenhum aluno para exportar."); return; }
-    var txt = "OGRO TEAM — RELATÓRIO\n" + new Date().toLocaleDateString('pt-BR') + "\nFiltros: " + perfil + " | " + mod + " | " + (ctFilt ? getCTNome(ctFilt) : "Todos CTs") + " | Status: " + stFilt + "\n" + "=".repeat(40) + "\n\n";
+    var periodo = (dataDe || dataAte) ? (" | Período: " + (dataDe ? formatarData(dataDe) : "início") + " até " + (dataAte ? formatarData(dataAte) : "hoje")) : "";
+    var txt = "OGRO TEAM — RELATÓRIO\n" + new Date().toLocaleDateString('pt-BR') + "\nFiltros: " + perfil + " | " + mod + " | " + (ctFilt ? getCTNome(ctFilt) : "Todos CTs") + " | Status: " + stFilt + periodo + "\n" + "=".repeat(40) + "\n\n";
     f.forEach(function(a, i) {
         txt += (i+1) + ". " + a.nome + "\n   CT: " + getCTNome(a.ctId) + " | " + a.perfil + " | " + a.modalidade + "\n   Status: " + a.status + " | R$ " + getMensalidadeAluno(a).toFixed(2) + "\n   E-mail: " + (a.email||"—") + "\n\n";
     });
@@ -1193,46 +1255,78 @@ function enviarAvisoForm() {
 // PAGAMENTOS (P15)
 // ========================================================
 function renderPagamentos() {
-    var filtCT    = document.getElementById('pag-filtro-ct').value;
-    var filtAluno = document.getElementById('pag-filtro-aluno') ? document.getElementById('pag-filtro-aluno').value : "";
+    // Popular filtros de CT e aluno fiéis ao cadastro
+    var selFiltCT = document.getElementById('pag-filtro-ct');
+    var valFiltCT = selFiltCT.value;
+    selFiltCT.innerHTML = '<option value="">Todos os CTs</option>';
+    DB.cts.forEach(function(c) { selFiltCT.innerHTML += '<option value="' + c.id + '">' + c.nome + '</option>'; });
+    if (valFiltCT) selFiltCT.value = valFiltCT;
+
+    // Popular alunos do filtro com base no CT selecionado
+    var selFiltAluno = document.getElementById('pag-filtro-aluno');
+    var valFiltAluno = selFiltAluno ? selFiltAluno.value : "";
+    popularAlunosPorCT('pag-filtro-aluno', valFiltCT);
+    if (valFiltAluno) selFiltAluno.value = valFiltAluno;
+
+    var filtCT    = valFiltCT;
+    var filtAluno = selFiltAluno ? selFiltAluno.value : "";
     var filtDe    = document.getElementById('pag-filtro-de').value;
     var filtAte   = document.getElementById('pag-filtro-ate').value;
     var filtMin   = parseFloat(document.getElementById('pag-filtro-val-min').value) || 0;
     var filtMax   = parseFloat(document.getElementById('pag-filtro-val-max').value) || Infinity;
     var lista = document.getElementById('pag-lista'); lista.innerHTML = "";
+
     var f = DB.pagamentos.filter(function(p) {
         var al = DB.alunos.find(function(a) { return a.id === p.alunoId; });
-        var nomeOk = !filtAluno || (al && al.nome.toLowerCase().includes(filtAluno.toLowerCase()));
-        var ctOk   = !filtCT || p.ctId === filtCT;
-        var deOk   = !filtDe  || p.data >= filtDe;
-        var ateOk  = !filtAte || p.data <= filtAte;
-        var valOk  = p.valor >= filtMin && p.valor <= filtMax;
-        return nomeOk && ctOk && deOk && ateOk && valOk;
+        // Filtro por CT: usa o ctId do aluno ou do pagamento
+        var ctIdReal = p.ctId || (al ? al.ctId : "");
+        var ctOk    = !filtCT    || ctIdReal === filtCT;
+        // Filtro por aluno: selecionável
+        var alunoOk = !filtAluno || p.alunoId === filtAluno;
+        var deOk    = !filtDe    || p.data >= filtDe;
+        var ateOk   = !filtAte   || p.data <= filtAte;
+        var valOk   = p.valor >= filtMin && p.valor <= filtMax;
+        return ctOk && alunoOk && deOk && ateOk && valOk;
     });
+
     var total = 0; f.forEach(function(p) { total += p.valor; });
     var totalGeral = 0; DB.pagamentos.forEach(function(p) { totalGeral += p.valor; });
     document.getElementById('pag-total-filtro').textContent = "R$ " + total.toFixed(2);
     document.getElementById('pag-total-geral').textContent  = "R$ " + totalGeral.toFixed(2);
     document.getElementById('pag-count').textContent = f.length;
+
     if (f.length === 0) { lista.innerHTML = "<p style='color:#8a8a8a;text-align:center;padding:20px'>Nenhum pagamento encontrado.</p>"; return; }
     f.forEach(function(p) {
         var al = DB.alunos.find(function(a) { return a.id === p.alunoId; });
-        var nome = al ? al.nome : "—"; var ctNome = getCTNome(p.ctId);
+        var nome = al ? al.nome : "—";
+        var ctNome = getCTNome(p.ctId || (al ? al.ctId : ""));
         var corM = p.metodo === "Pix" ? '#4ade80' : '#2563eb';
         var div = document.createElement('div'); div.className = "item-registro";
         div.innerHTML = '<div><strong>' + nome + '</strong><br><small style="color:#8a8a8a">' + formatarData(p.data) + ' | ' + ctNome + '</small></div>' +
             '<div style="text-align:right"><span style="color:#4ade80;font-weight:bold;display:block">R$ ' + p.valor.toFixed(2) + '</span><span class="badge" style="background:' + corM + '">' + p.metodo + '</span></div>';
         lista.appendChild(div);
     });
-    // Popular filtros
-    popularCTs('pag-filtro-ct', true);
 }
 
 window.abrirFormPagamento = function(metodo) {
     document.getElementById('pag-metodo').value = metodo;
     document.getElementById('form-novo-pagamento').style.display = 'block';
-    popularCTs('pag-ct-sel', false);
+    // Popular CTs fiéis ao cadastro
+    var selPagCT = document.getElementById('pag-ct-sel');
+    selPagCT.innerHTML = '<option value="">Selecione o CT</option>';
+    DB.cts.forEach(function(c) { selPagCT.innerHTML += '<option value="' + c.id + '">' + c.nome + '</option>'; });
+    // Popular alunos (todos inicialmente)
     popularAlunosPorCT('pag-aluno-sel', '');
+    // Ao trocar CT no form, atualiza lista de alunos e preenche valor sugerido
+    selPagCT.onchange = function() {
+        popularAlunosPorCT('pag-aluno-sel', this.value);
+    };
+    // Ao selecionar aluno, sugere valor da mensalidade
+    document.getElementById('pag-aluno-sel').onchange = function() {
+        var alId = this.value;
+        var al = DB.alunos.find(function(a) { return a.id === alId; });
+        if (al) document.getElementById('pag-valor').value = getMensalidadeAluno(al).toFixed(2);
+    };
 };
 
 function registrarPagamento() {
