@@ -273,7 +273,7 @@ document.getElementById('btn-recuperar').addEventListener('click', async functio
             error.message || "Não foi possível enviar o e-mail de recuperação."
         );
     }
-});1
+});
 
     // SAIR
     document.getElementById('btn-sair').addEventListener('click', function() { currentUser = null; document.getElementById('login-email').value = ""; document.getElementById('login-senha').value = ""; ir(1); });
