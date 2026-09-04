@@ -222,21 +222,58 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.getElementById('login-senha').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('btn-login').click(); });
 
-    // RECUPERAÇÃO
-    document.getElementById('link-esqueceu').addEventListener('click', function() { ir(2); });
-    document.getElementById('link-voltar-login').addEventListener('click', function() { ir(1); });
-    document.getElementById('btn-recuperar').addEventListener('click', function() {
-        var u = document.getElementById('recup-usuario').value.trim();
-        var n = document.getElementById('recup-nova').value.trim();
-        var c = document.getElementById('recup-confirma').value.trim();
-        if (!u || !n) { mostrarModal("ATENÇÃO", "Preencha todos os campos."); return; }
-        if (n !== c) { mostrarModal("ATENÇÃO", "As senhas não coincidem."); return; }
-        var adm = DB.admins.find(function(a) { return a.email === u || a.nome === u; });
-        if (adm) { adm.senha = n; mostrarModal("✅ SUCESSO", "Senha atualizada!"); return; }
-        var al = DB.alunos.find(function(a) { return a.email === u || a.nome === u || a.whatsapp === u; });
-        if (al) { al.senha = n; mostrarModal("✅ SUCESSO", "Senha atualizada!"); return; }
-        mostrarModal("NÃO ENCONTRADO", "Cadastro não encontrado.");
-    });
+    // RECUPERAÇÃO DE SENHA — SUPABASE
+document.getElementById('link-esqueceu').addEventListener('click', function() {
+    ir(2);
+});
+
+document.getElementById('link-voltar-login').addEventListener('click', function() {
+    ir(1);
+});
+
+document.getElementById('btn-recuperar').addEventListener('click', async function() {
+    var email = document.getElementById('recup-usuario').value.trim();
+    var novaSenha = document.getElementById('recup-nova').value.trim();
+    var confirmaSenha = document.getElementById('recup-confirma').value.trim();
+
+    if (!email || !novaSenha || !confirmaSenha) {
+        mostrarModal("ATENÇÃO", "Preencha todos os campos.");
+        return;
+    }
+
+    if (novaSenha !== confirmaSenha) {
+        mostrarModal("ATENÇÃO", "As senhas não coincidem.");
+        return;
+    }
+
+    if (novaSenha.length < 6) {
+        mostrarModal("ATENÇÃO", "A senha deve ter pelo menos 6 caracteres.");
+        return;
+    }
+
+    try {
+        var { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + window.location.pathname
+        });
+
+        if (error) throw error;
+
+        mostrarModal(
+            "📧 E-MAIL ENVIADO",
+            "Enviamos um link para redefinição de senha para " + email + ".\n\nAbra o e-mail e toque no link recebido para criar sua nova senha."
+        );
+
+        document.getElementById('recup-nova').value = "";
+        document.getElementById('recup-confirma').value = "";
+
+    } catch (error) {
+        console.error("Erro na recuperação:", error);
+        mostrarModal(
+            "❌ ERRO",
+            error.message || "Não foi possível enviar o e-mail de recuperação."
+        );
+    }
+});1
 
     // SAIR
     document.getElementById('btn-sair').addEventListener('click', function() { currentUser = null; document.getElementById('login-email').value = ""; document.getElementById('login-senha').value = ""; ir(1); });
