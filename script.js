@@ -248,12 +248,11 @@ document.getElementById('link-voltar-login').addEventListener('click', function(
 });
 
 document.getElementById('btn-recuperar').addEventListener('click', async function() {
-    var email = document.getElementById('recup-usuario').value.trim();
     var novaSenha = document.getElementById('recup-nova').value.trim();
     var confirmaSenha = document.getElementById('recup-confirma').value.trim();
 
-    if (!email || !novaSenha || !confirmaSenha) {
-        mostrarModal("ATENÇÃO", "Preencha todos os campos.");
+    if (!novaSenha || !confirmaSenha) {
+        mostrarModal("ATENÇÃO", "Preencha os dois campos de senha.");
         return;
     }
 
@@ -268,26 +267,30 @@ document.getElementById('btn-recuperar').addEventListener('click', async functio
     }
 
     try {
-        console.log("SUPABASE CLIENT:", supabaseClient);
-var { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + window.location.pathname
+        var { error } = await window.supabaseClient.auth.updateUser({
+            password: novaSenha
         });
 
         if (error) throw error;
 
         mostrarModal(
-            "📧 E-MAIL ENVIADO",
-            "Enviamos um link para redefinição de senha para " + email + ".\n\nAbra o e-mail e toque no link recebido para criar sua nova senha."
+            "✅ SENHA ATUALIZADA",
+            "Sua senha foi alterada com sucesso. Agora você poderá entrar no sistema com a nova senha."
         );
 
         document.getElementById('recup-nova').value = "";
         document.getElementById('recup-confirma').value = "";
 
+        setTimeout(async function() {
+            await window.supabaseClient.auth.signOut();
+            ir(1);
+        }, 2000);
+
     } catch (error) {
-        console.error("Erro na recuperação:", error);
+        console.error("Erro ao atualizar senha:", error);
         mostrarModal(
             "❌ ERRO",
-            error.message || "Não foi possível enviar o e-mail de recuperação."
+            error.message || "Não foi possível atualizar sua senha."
         );
     }
 });
