@@ -274,29 +274,36 @@ document.getElementById('btn-login').addEventListener('click', async function() 
 
         var usuarioSupabase = resultado.data.user;
 
-        // Procura o aluno localmente, caso exista
-        var alunoEncontrado = DB.alunos.find(function(a) {
-            return a.email === usuarioSupabase.email;
-        });
+        // BUSCA O CADASTRO REAL DO ALUNO NO SUPABASE
+var respostaAluno = await window.supabaseClient
+    .from('students')
+    .select('*')
+    .eq('user_id', usuarioSupabase.id)
+    .maybeSingle();
 
-        // Se existir no DB local, mantém a estrutura antiga
-        if (alunoEncontrado) {
-            currentUser = Object.assign({}, alunoEncontrado);
-            currentUser.nivel = alunoEncontrado.perfil === "Instrutor"
-                ? "Aluno Instrutor"
-                : "Aluno";
-        } else {
-            // Cadastro autenticado pelo Supabase
-            currentUser = {
-                id: usuarioSupabase.id,
-                nome: usuarioSupabase.user_metadata && usuarioSupabase.user_metadata.full_name
-                    ? usuarioSupabase.user_metadata.full_name
-                    : usuarioSupabase.email,
-                email: usuarioSupabase.email,
-                nivel: "Aluno",
-                perfil: "Aluno"
-            };
-        }
+if (respostaAluno.error) {
+    throw respostaAluno.error;
+}
+
+var alunoSupabase = respostaAluno.data;
+
+if (!alunoSupabase) {
+    throw new Error("Usuário autenticado não possui cadastro de aluno.");
+}
+
+// Monta o usuário atual com os dados reais do Supabase
+currentUser = {
+    id: alunoSupabase.id,
+    user_id: alunoSupabase.user_id,
+    nome: alunoSupabase.full_name,
+    email: alunoSupabase.email || usuarioSupabase.email,
+    whatsapp: alunoSupabase.phone,
+    ctId: alunoSupabase.center_id,
+    status: alunoSupabase.status,
+    foto: alunoSupabase.photo_url,
+    nivel: "Aluno",
+    perfil: "Aluno"
+};
 
         ir(12);
 
