@@ -252,7 +252,7 @@ document.getElementById('btn-recuperar').addEventListener('click', async functio
     }
 
     try {
-        var { error } = await supabase.auth.resetPasswordForEmail(email, {
+        var { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
             redirectTo: window.location.origin + window.location.pathname
         });
 
