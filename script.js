@@ -300,51 +300,92 @@ document.getElementById('link-voltar-login').addEventListener('click', function(
     ir(1);
 });
 
-document.getElementById('btn-recuperar').addEventListener('click', async function() {
-    var novaSenha = document.getElementById('recup-nova').value.trim();
-    var confirmaSenha = document.getElementById('recup-confirma').value.trim();
+document.getElementById('btn-login').addEventListener('click', async function() {
+    var input = document.getElementById('login-email').value.trim();
+    var senha = document.getElementById('login-senha').value.trim();
 
-    if (!novaSenha || !confirmaSenha) {
-        mostrarModal("ATENÇÃO", "Preencha os dois campos de senha.");
+    if (!input || !senha) {
+        mostrarModal("ATENÇÃO", "Preencha login e senha.");
         return;
     }
 
-    if (novaSenha !== confirmaSenha) {
-        mostrarModal("ATENÇÃO", "As senhas não coincidem.");
+    // LOGIN ADMINISTRADOR — mantém o sistema atual
+    var adm = DB.admins.find(function(a) {
+        return (a.email === input || a.nome === input) && a.senha === senha;
+    });
+
+    if (adm) {
+        currentUser = Object.assign({}, adm);
+        log("Admin", "Login", adm.nome + " autenticado.");
+        ir(3);
         return;
     }
 
-    if (novaSenha.length < 6) {
-        mostrarModal("ATENÇÃO", "A senha deve ter pelo menos 6 caracteres.");
-        return;
-    }
-
+    // LOGIN DO ALUNO — SUPABASE AUTH
     try {
-        var { error } = await window.supabaseClient.auth.updateUser({
-            password: novaSenha
+        var emailAluno = input;
+
+        // Se o usuário informou nome ou WhatsApp,
+        // tenta localizar primeiro no cadastro local.
+        var alunoLocal = DB.alunos.find(function(a) {
+            return a.email === input || a.nome === input || a.whatsapp === input;
         });
 
-        if (error) throw error;
+        if (alunoLocal) {
+            emailAluno = alunoLocal.email;
+        }
 
-        mostrarModal(
-            "✅ SENHA ATUALIZADA",
-            "Sua senha foi alterada com sucesso. Agora você poderá entrar no sistema com a nova senha."
-        );
+        // Autenticação real pelo Supabase
+        var resultado = await window.supabaseClient.auth.signInWithPassword({
+            email: emailAluno,
+            password: senha
+        });
 
-        document.getElementById('recup-nova').value = "";
-        document.getElementById('recup-confirma').value = "";
+        if (resultado.error) {
+            throw resultado.error;
+        }
 
-        setTimeout(async function() {
-            await window.supabaseClient.auth.signOut();
-            ir(1);
-        }, 2000);
+        var usuarioSupabase = resultado.data.user;
+
+        // Procura o aluno localmente, caso exista
+        var alunoEncontrado = DB.alunos.find(function(a) {
+            return a.email === usuarioSupabase.email;
+        });
+
+        // Se existir no DB local, mantém a estrutura antiga
+        if (alunoEncontrado) {
+            currentUser = Object.assign({}, alunoEncontrado);
+            currentUser.nivel = alunoEncontrado.perfil === "Instrutor"
+                ? "Aluno Instrutor"
+                : "Aluno";
+        } else {
+            // Cadastro autenticado pelo Supabase
+            currentUser = {
+                id: usuarioSupabase.id,
+                nome: usuarioSupabase.user_metadata && usuarioSupabase.user_metadata.full_name
+                    ? usuarioSupabase.user_metadata.full_name
+                    : usuarioSupabase.email,
+                email: usuarioSupabase.email,
+                nivel: "Aluno",
+                perfil: "Aluno"
+            };
+        }
+
+        ir(12);
 
     } catch (error) {
-        console.error("Erro ao atualizar senha:", error);
+        console.error("Erro no login:", error);
+
         mostrarModal(
-            "❌ ERRO",
-            error.message || "Não foi possível atualizar sua senha."
+            "ACESSO NEGADO",
+            "Credenciais inválidas.\nVerifique seu login e senha."
         );
+    }
+});
+
+document.getElementById('login-senha').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('btn-login').click();
     }
 });
 
