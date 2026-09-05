@@ -200,6 +200,22 @@ function ir(pagina) {
 // INICIALIZAÇÃO
 // ========================================================
 document.addEventListener('DOMContentLoaded', function() {
+        // DETECTAR RECUPERAÇÃO DE SENHA
+    window.supabaseClient.auth.onAuthStateChange(function(event, session) {
+        if (event === 'PASSWORD_RECOVERY') {
+            ir(2);
+
+            document.getElementById('recup-usuario').style.display = 'none';
+
+            var titulo = document.querySelector('#p2 h2');
+            if (titulo) titulo.textContent = 'Criar Nova Senha';
+
+            var subtitulo = document.querySelector('#p2 .subtitle');
+            if (subtitulo) subtitulo.textContent = 'Digite sua nova senha';
+
+            document.getElementById('btn-recuperar').textContent = 'Salvar Nova Senha';
+        }
+    });
 
     document.querySelectorAll('[data-nav]').forEach(function(el) {
         el.addEventListener('click', function() { ir(parseInt(this.dataset.nav)); });
