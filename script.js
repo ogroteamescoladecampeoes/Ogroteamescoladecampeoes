@@ -226,17 +226,70 @@ document.addEventListener('DOMContentLoaded', function() {
         var inp = document.getElementById('login-senha');
         inp.type = inp.type === 'password' ? 'text' : 'password';
     });
-    document.getElementById('btn-login').addEventListener('click', function() {
-        var input = document.getElementById('login-email').value.trim();
-        var senha = document.getElementById('login-senha').value.trim();
-        if (!input || !senha) { mostrarModal("ATENÇÃO", "Preencha login e senha."); return; }
-        var adm = DB.admins.find(function(a) { return (a.email === input || a.nome === input) && a.senha === senha; });
-        if (adm) { currentUser = Object.assign({}, adm); log("Admin", "Login", adm.nome + " autenticado."); ir(3); return; }
-        var al = DB.alunos.find(function(a) { return (a.email === input || a.nome === input || a.whatsapp === input) && a.senha === senha; });
-        if (al) { currentUser = Object.assign({}, al); currentUser.nivel = al.perfil === "Instrutor" ? "Aluno Instrutor" : "Aluno"; ir(12); return; }
-        mostrarModal("ACESSO NEGADO", "Credenciais inválidas.\nVerifique seu login e senha.");
+    document.getElementById('btn-login').addEventListener('click', async function() {
+    var input = document.getElementById('login-email').value.trim();
+    var senha = document.getElementById('login-senha').value.trim();
+
+    if (!input || !senha) {
+        mostrarModal("ATENÇÃO", "Preencha login e senha.");
+        return;
+    }
+
+    // LOGIN ADMINISTRADOR — mantém o sistema atual
+    var adm = DB.admins.find(function(a) {
+        return (a.email === input || a.nome === input) && a.senha === senha;
     });
-    document.getElementById('login-senha').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('btn-login').click(); });
+
+    if (adm) {
+        currentUser = Object.assign({}, adm);
+        log("Admin", "Login", adm.nome + " autenticado.");
+        ir(3);
+        return;
+    }
+
+    // LOCALIZA O ALUNO PELO E-MAIL, NOME OU WHATSAPP
+    var al = DB.alunos.find(function(a) {
+        return a.email === input || a.nome === input || a.whatsapp === input;
+    });
+
+    if (!al) {
+        mostrarModal("ACESSO NEGADO", "Usuário não encontrado.");
+        return;
+    }
+
+    // LOGIN DO ALUNO — valida a senha pelo Supabase Auth
+    try {
+        var emailAluno = al.email;
+
+        var resultado = await window.supabaseClient.auth.signInWithPassword({
+            email: emailAluno,
+            password: senha
+        });
+
+        if (resultado.error) {
+            throw resultado.error;
+        }
+
+        currentUser = Object.assign({}, al);
+        currentUser.nivel = al.perfil === "Instrutor" ? "Aluno Instrutor" : "Aluno";
+
+        ir(12);
+
+    } catch (error) {
+        console.error("Erro no login:", error);
+
+        mostrarModal(
+            "ACESSO NEGADO",
+            "Credenciais inválidas.\nVerifique seu login e senha."
+        );
+    }
+});
+
+document.getElementById('login-senha').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('btn-login').click();
+    }
+});
 
     // RECUPERAÇÃO DE SENHA — SUPABASE
 document.getElementById('link-esqueceu').addEventListener('click', function() {
