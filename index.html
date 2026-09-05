@@ -563,15 +563,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-    const SUPABASE_URL = "https://hoccehjjhfnqzrsaklek.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_AyHh2p9FuhzHTyc1L1YMCQ_hLlqPTtT";
-
-    const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-        console.log("SUPABASE AUTH:", supabaseClient.auth);
-);
-    alert("Supabase Auth: " + (supabaseClient.auth ? "OK" : "ERRO"));
+    window.supabaseClient = window.supabase.createClient(
+        "https://hoccehjjhfnqzrsaklek.supabase.co",
+        "sb_publishable_AyHh2p9FuhzHTyc1L1YMCQ_hLlqPTtT"
+    );
 </script>
     
 <script src="script.js"></script>
