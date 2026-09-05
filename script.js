@@ -253,7 +253,7 @@ document.getElementById('btn-recuperar').addEventListener('click', async functio
 
     try {
         console.log("SUPABASE CLIENT:", supabaseClient);
-var { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+var { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
             redirectTo: window.location.origin + window.location.pathname
         });
 
