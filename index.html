@@ -560,8 +560,19 @@
     <button class="btn-footer" data-nav="9">🗂️ Central de Cadastros</button>
 </div>
 
-</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const SUPABASE_URL = "https://hoccehjjhfnqzrsaklek.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_AyHh2p9FuhzHTyc1L1YMCQ_hLlqPTtT";
+
+    const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+</script>
+
 <script src="script.js"></script>
+
 </body>
 </html>
